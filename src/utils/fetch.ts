@@ -2,14 +2,13 @@ export async function appFetch<T>(
   url: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const { body, headers, ...others } = options;
+  const { headers, ...others } = options;
   const newHeaders: HeadersInit = {
     ...headers,
     "Content-Type": "application/json",
   };
 
   const res = await fetch(url, {
-    body: body ? JSON.stringify(body) : undefined,
     headers: newHeaders,
     ...others,
   });

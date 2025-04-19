@@ -1,14 +1,10 @@
-import { Item } from "@/services/type";
+import { Product } from "@/services/type";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore package discontinued
-import { fa, Faker } from "@faker-js/faker";
+import * as faker from "@faker-js/faker";
 
-export const faker = new Faker({
-  locale: [fa],
-});
-
-export function generateItems(count = 10_000): Item[] {
+export function generateItems(count = 10_000): Product[] {
   const categories = ["Electronics", "Books", "Clothing", "Sports", "Home"];
   return Array.from({ length: count }, (_, i) => ({
     id: i + 1,
@@ -18,7 +14,7 @@ export function generateItems(count = 10_000): Item[] {
       .between({ from: "2022-01-01", to: "2024-12-31" })
       .toISOString(),
     price: parseFloat(faker.commerce.price({ min: 10, max: 1000 })),
-    description: faker.lorem.sentence(),
+    description: faker.commerce.description(),
     stock: faker.number.int({ min: 0, max: 500 }),
     rating: parseFloat(faker.number.float({ min: 1, max: 5 }).toFixed(1)),
   }));
