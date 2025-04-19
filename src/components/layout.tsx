@@ -9,8 +9,8 @@ function Layout({ children }: React.PropsWithChildren) {
   const isLight = theme === "light";
 
   return (
-    <>
-      <header className="flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 border-b px-4">
+    <div className="flex flex-col">
+      <header className="grow-0 shrink-0 flex sticky top-0 bg-background h-16 items-center gap-2 border-b px-4">
         <Button
           data-sidebar="trigger"
           variant="ghost"
@@ -24,8 +24,8 @@ function Layout({ children }: React.PropsWithChildren) {
           <span className="sr-only">{"Toggle theme"}</span>
         </Button>
       </header>
-      {children}
-    </>
+      <main className="grow-1 shrink-1">{children}</main>
+    </div>
   );
 }
 
