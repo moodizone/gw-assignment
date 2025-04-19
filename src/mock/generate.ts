@@ -1,8 +1,6 @@
 import { Product } from "@/services/type";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore package discontinued
-import * as faker from "@faker-js/faker";
+import { faker } from "@faker-js/faker";
 
 export function generateItems(count = 10_000): Product[] {
   const categories = ["Electronics", "Books", "Clothing", "Sports", "Home"];
@@ -14,7 +12,7 @@ export function generateItems(count = 10_000): Product[] {
       .between({ from: "2022-01-01", to: "2024-12-31" })
       .toISOString(),
     price: parseFloat(faker.commerce.price({ min: 10, max: 1000 })),
-    description: faker.commerce.description(),
+    description: faker.commerce.productDescription(),
     stock: faker.number.int({ min: 0, max: 500 }),
     rating: parseFloat(faker.number.float({ min: 1, max: 5 }).toFixed(1)),
   }));

@@ -1,13 +1,17 @@
-import { getQueryParams } from "@/utils/params";
 import { http, HttpResponse } from "msw";
+
+import { getQueryParams } from "@/utils/params";
 import { getData, setData } from "@/mock/lib";
 import { Product } from "@/services/type";
+import { sleep } from "@/utils/sleep";
+
+const rndDelay = () => Math.random() * 2000;
 
 export const handlers = [
   //================================
   // GET
   //================================
-  http.get("/api/items", ({ request }) => {
+  http.get("/api/product", async ({ request }) => {
     const url = new URL(request.url);
     const {
       search,
@@ -61,24 +65,30 @@ export const handlers = [
     }
 
     // sorting
-    if (sort === "date" || sort === "price" || sort === "stock" || sort === "rating") {
+    if (
+      sort === "date" ||
+      sort === "price" ||
+      sort === "stock" ||
+      sort === "rating"
+    ) {
       data.sort((a, b) => {
-      const valA = a[sort as keyof Product];
-      const valB = b[sort as keyof Product];
-      return order === "asc" ? (valA > valB ? 1 : -1) : valA < valB ? 1 : -1;
+        const valA = a[sort as keyof Product];
+        const valB = b[sort as keyof Product];
+        return order === "asc" ? (valA > valB ? 1 : -1) : valA < valB ? 1 : -1;
       });
     }
 
     const total = data.length;
     const paginated = data.slice((page - 1) * limit, page * limit);
 
+    await sleep(rndDelay());
     return HttpResponse.json({ data: paginated, total });
   }),
 
   //================================
   // POSt
   //================================
-  http.post("/api/items", async ({ request }) => {
+  http.post("/api/product", async ({ request }) => {
     const newItem = (await request.json()) as Omit<Product, "id">;
     const data = getData();
     const id = Math.max(...data.map((i) => i.id)) + 1;
@@ -101,7 +111,7 @@ export const handlers = [
   //================================
   // PATCH
   //================================
-  http.put("/api/items/:id", async ({ params, request }) => {
+  http.put("/api/product/:id", async ({ params, request }) => {
     const id = Number(params.id);
     const updated = (await request.json()) as Partial<Product>;
     const data = getData();
@@ -119,7 +129,7 @@ export const handlers = [
   //================================
   // DELETE
   //================================
-  http.delete("/api/items/:id", ({ params }) => {
+  http.delete("/api/product/:id", ({ params }) => {
     const id = Number(params.id);
     const filtered = getData().filter((i) => i.id !== id);
     setData(filtered);
