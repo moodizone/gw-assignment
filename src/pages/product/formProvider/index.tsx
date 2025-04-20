@@ -11,6 +11,7 @@ import {
 import ProductForm from "@/pages/product/formProvider/form";
 import { getProductById } from "@/services/product";
 import Fallback from "@/pages/product/formProvider/fallback";
+import ErrorBoundaryProvider from "@/components/errorBoundary";
 
 interface LoaderProps {
   mode: string | null;
@@ -77,9 +78,11 @@ function FormProvider({ isDrawerOpen, pathname }: Props) {
 
       {mode === "create" ? <ProductForm mode={mode} /> : null}
       {mode === "edit" || mode === "details" ? (
-        <React.Suspense fallback={<Fallback />}>
-          <ProductLoader id={id} mode={mode} />
-        </React.Suspense>
+        <ErrorBoundaryProvider>
+          <React.Suspense fallback={<Fallback />}>
+            <ProductLoader id={id} mode={mode} />
+          </React.Suspense>
+        </ErrorBoundaryProvider>
       ) : null}
     </DrawerContent>
   );

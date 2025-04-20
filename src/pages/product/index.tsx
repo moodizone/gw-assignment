@@ -5,6 +5,7 @@ import ListProvider from "@/pages/product/listProvider";
 import Fallback from "@/pages/product/fallback";
 import { Drawer } from "@/components/ui/drawer";
 import FormProvider from "@/pages/product/formProvider";
+import ErrorBoundaryProvider from "@/components/errorBoundary";
 
 export default function ProductList() {
   //================================
@@ -31,9 +32,11 @@ export default function ProductList() {
           </p>
         </div>
       </div>
-      <React.Suspense fallback={<Fallback />}>
-        <ListProvider />
-      </React.Suspense>
+      <ErrorBoundaryProvider>
+        <React.Suspense fallback={<Fallback />}>
+          <ListProvider />
+        </React.Suspense>
+      </ErrorBoundaryProvider>
       <Drawer
         direction="right"
         open={isDrawerOpen}
