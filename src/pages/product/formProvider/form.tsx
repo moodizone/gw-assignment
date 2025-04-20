@@ -65,9 +65,9 @@ function ProductForm({ mode, product }: Props) {
   const { isPending, mutateAsync } = useMutation({
     async mutationFn(data: ProductFormValues) {
       const nId = Number(id);
-      if (mode === "create") {
+      if (isCreateMode) {
         return createProduct(data);
-      } else if (mode === "edit" && !Number.isNaN(nId)) {
+      } else if (isEditMode && !Number.isNaN(nId)) {
         return updateProduct(nId, data);
       }
     },
@@ -78,12 +78,9 @@ function ProductForm({ mode, product }: Props) {
   });
   async function onSubmit(data: ProductFormValues) {
     await mutateAsync(data);
-    toast(
-      `"Product ${mode === "create" ? "created" : "updated"} successfully"`,
-      {
-        description: `${new Date().toLocaleTimeString()}`,
-      }
-    );
+    toast(`"Product ${isCreateMode ? "created" : "updated"} successfully"`, {
+      description: `${new Date().toLocaleTimeString()}`,
+    });
     navigate("/product");
   }
 
