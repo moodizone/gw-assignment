@@ -1,28 +1,18 @@
 import * as React from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import ListProvider from "@/pages/product/listProvider";
 import Fallback from "@/pages/product/fallback";
 import { Drawer } from "@/components/ui/drawer";
-import ProductForm from "@/pages/product/form";
+import FormProvider from "@/pages/product/formProvider";
 
 export default function ProductList() {
   //================================
   // Init
   //================================
   const { pathname } = useLocation();
-  const { id } = useParams();
-  const navigate = useNavigate();
   const isDrawerOpen = pathname !== "/product";
-  const mode = React.useMemo(() => {
-    if (!isDrawerOpen) return null;
-
-    if (pathname === `/product/${id}`) return "details";
-    if (pathname === `/product/edit/${id}`) return "edit";
-    if (pathname === `/product/create`) return "create";
-
-    return null;
-  }, [pathname, id, isDrawerOpen]);
+  const navigate = useNavigate();
 
   //================================
   // Render
@@ -51,7 +41,7 @@ export default function ProductList() {
           navigate("/product");
         }}
       >
-        <ProductForm mode={mode} />
+        <FormProvider pathname={pathname} isDrawerOpen={isDrawerOpen} />
       </Drawer>
     </div>
   );
