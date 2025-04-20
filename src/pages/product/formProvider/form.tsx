@@ -78,7 +78,7 @@ function ProductForm({ mode, product }: Props) {
   });
   async function onSubmit(data: ProductFormValues) {
     await mutateAsync(data);
-    toast(`"Product ${isCreateMode ? "created" : "updated"} successfully"`, {
+    toast(`Product ${isCreateMode ? "created" : "updated"} successfully`, {
       description: `${new Date().toLocaleTimeString()}`,
     });
     navigate("/product");

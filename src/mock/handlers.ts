@@ -88,7 +88,7 @@ export const handlers = [
     const paginated = data.slice((page - 1) * limit, page * limit);
 
     await sleep(rndDelay());
-    return HttpResponse.json({ data: paginated, total }, { status: 404 });
+    return HttpResponse.json({ data: paginated, total });
   }),
   http.get("/api/product/:id", async ({ params }) => {
     const id = Number(params.id);
