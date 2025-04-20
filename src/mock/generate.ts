@@ -1,9 +1,16 @@
-import { Product } from "@/services/type";
+import { CategoryEnum, Product } from "@/services/type";
 
 import { faker } from "@faker-js/faker";
 
 export function generateItems(count = 10_000): Product[] {
-  const categories = ["Electronics", "Books", "Clothing", "Sports", "Home"];
+  const categories = [
+    CategoryEnum.Electronics,
+    CategoryEnum.Books,
+    CategoryEnum.Clothing,
+    CategoryEnum.Home,
+    CategoryEnum.Sports,
+  ];
+
   return Array.from({ length: count }, (_, i) => ({
     id: i + 1,
     title: faker.commerce.productName(),

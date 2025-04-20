@@ -2,7 +2,9 @@ import { appFetch } from "@/utils/fetch";
 import { Product } from "@/services/type";
 
 export function getProducts(query: string) {
-  return appFetch<{ data: Product[]; total: number }>(`/api/product?${query}`);
+  const base = "/api/product";
+  const newURL = query ? `${base}?${query}` : base;
+  return appFetch<{ data: Product[]; total: number }>(newURL);
 }
 
 export function createProduct(item: Omit<Product, "id" | "date">) {
