@@ -22,9 +22,8 @@ import { Separator } from "@/components/ui/separator";
 import { Product } from "@/services/type";
 
 export interface OptionType {
-  label: string;
+  label: React.ReactNode;
   value: string;
-  icon?: React.ComponentType<{ className?: string }>;
 }
 
 interface FilterProps {
@@ -109,9 +108,6 @@ export function Filter({ column, title, options }: FilterProps) {
                     >
                       <CheckIcon className={cn("h-4 w-4")} />
                     </div>
-                    {option.icon && (
-                      <option.icon className="me-2 h-4 w-4 text-muted-foreground" />
-                    )}
                     <span>{option.label}</span>
                   </CommandItem>
                 );

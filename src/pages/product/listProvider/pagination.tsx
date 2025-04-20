@@ -24,11 +24,7 @@ export function Pagination({
   table,
 }: PaginationProps) {
   return (
-    <div className="flex flex-col md:flex-row items-center justify-between gap-y-2 px-2">
-      <div className="flex-1 text-sm text-muted-foreground">
-        {table.getFilteredSelectedRowModel().rows.length} of{" "}
-        {table.getFilteredRowModel().rows.length} row(s) selected.
-      </div>
+    <div className="flex flex-col md:flex-row items-center justify-end gap-y-2 px-2">
       <div className="flex flex-col md:flex-row items-center gap-y-2 gap-x-6 lg:gap-x-8">
         <div className="flex items-center gap-x-2">
           <p className="text-sm font-medium">{"Rows per page"}</p>

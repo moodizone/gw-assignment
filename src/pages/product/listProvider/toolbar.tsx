@@ -1,7 +1,7 @@
 "use client";
-
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { Table } from "@tanstack/react-table";
+import { Star } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,7 +13,7 @@ interface Props {
   table: Table<Product>;
 }
 
-const categories: OptionType[] = [
+export const categories: OptionType[] = [
   {
     label: CategoryEnum.Books,
     value: CategoryEnum.Books,
@@ -35,13 +35,16 @@ const categories: OptionType[] = [
     value: CategoryEnum.Sports,
   },
 ];
-const ratings: OptionType[] = [
-  { label: "One", value: "1" },
-  { label: "Two", value: "2" },
-  { label: "Three", value: "3" },
-  { label: "Four", value: "4" },
-  { label: "Five", value: "5" },
-];
+const ratings: OptionType[] = new Array(5).fill(1).map((_, index) => {
+  const label = (
+    <div className="flex flex-nowrap gap-x-1">
+      {new Array(index + 1).fill(1).map((_, ii) => (
+        <Star key={ii} />
+      ))}
+    </div>
+  );
+  return { label, value: `${index + 1}` };
+});
 
 export function Toolbar({ table }: Props) {
   const isFiltered = table.getState().columnFilters.length > 0;
