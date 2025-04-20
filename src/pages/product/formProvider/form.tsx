@@ -1,18 +1,16 @@
 import * as React from "react";
 import { z } from "zod";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
-import {
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-} from "@/components/ui/drawer";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+import { DrawerFooter } from "@/components/ui/drawer";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { Product } from "@/services/type";
+import { CategoryEnum, Product } from "@/services/type";
 import { productSchema } from "@/validation/product";
 import {
   Form,
@@ -32,6 +30,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { categories } from "@/pages/product/listProvider/toolbar";
+import { createProduct, updateProduct } from "@/services/product";
 
 interface Props {
   mode: string | null;
@@ -50,7 +49,7 @@ function ProductForm({ mode, product }: Props) {
     resolver: zodResolver(productSchema),
     defaultValues: product || {
       title: "",
-      category: "",
+      category: CategoryEnum.Books,
       price: 0,
       description: "",
       stock: 0,
@@ -60,14 +59,32 @@ function ProductForm({ mode, product }: Props) {
   //================================
   // Handlers
   //================================
-  function onSubmit(data: ProductFormValues) {
-    if (isCreateMode) {
-      console.log("Creating product:", data);
-      // Add your create logic here
-    } else if (isEditMode) {
-      console.log("Updating product:", data);
-      // Add your update logic here
-    }
+  const { id } = useParams();
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const { isPending, mutateAsync } = useMutation({
+    async mutationFn(data: ProductFormValues) {
+      const nId = Number(id);
+      if (mode === "create") {
+        return createProduct(data);
+      } else if (mode === "edit" && !Number.isNaN(nId)) {
+        return updateProduct(nId, data);
+      }
+    },
+    onSuccess() {
+      // invalidate the "products" query (out of sync)
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+    },
+  });
+  async function onSubmit(data: ProductFormValues) {
+    await mutateAsync(data);
+    toast(
+      `"Product ${mode === "create" ? "created" : "updated"} successfully"`,
+      {
+        description: `${new Date().toLocaleTimeString()}`,
+      }
+    );
+    navigate("/product");
   }
 
   //================================
@@ -133,6 +150,7 @@ function ProductForm({ mode, product }: Props) {
                   <FormControl>
                     <Input
                       {...field}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
                       id="price"
                       type="number"
                       readOnly={isReadOnly}
@@ -153,6 +171,7 @@ function ProductForm({ mode, product }: Props) {
                     <Input
                       {...field}
                       id="stock"
+                      onChange={(e) => field.onChange(Number(e.target.value))}
                       type="number"
                       readOnly={isReadOnly}
                       placeholder="Enter product stock"
@@ -173,6 +192,7 @@ function ProductForm({ mode, product }: Props) {
                       {...field}
                       id="rating"
                       type="number"
+                      onChange={(e) => field.onChange(Number(e.target.value))}
                       readOnly={isReadOnly}
                       placeholder="Enter product rate"
                     />
@@ -205,8 +225,14 @@ function ProductForm({ mode, product }: Props) {
 
       <DrawerFooter>
         {!isReadOnly && (
-          <Button type="submit">
-            {isCreateMode ? "Create Product" : "Update Product"}
+          <Button onClick={form.handleSubmit(onSubmit)}>
+            {isPending ? (
+              <Loader2 className="animate-spin" />
+            ) : isCreateMode ? (
+              "Create Product"
+            ) : (
+              "Update Product"
+            )}
           </Button>
         )}
         <Link

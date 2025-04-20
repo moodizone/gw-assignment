@@ -11,17 +11,17 @@ export function getProductById(id: number) {
     method: "GET",
   });
 }
-export function createProduct(item: Omit<Product, "id" | "date">) {
+export function createProduct(product: Omit<Product, "id" | "date">) {
   return appFetch<Product>("/api/product", {
-    method: "PATCH",
-    body: JSON.stringify(item),
+    method: "POST",
+    body: JSON.stringify(product),
   });
 }
 
-export function updateProduct(id: number, item: Partial<Product>) {
+export function updateProduct(id: number, product: Partial<Product>) {
   return appFetch<Product>(`/api/product/${id}`, {
     method: "PATCH",
-    body: JSON.stringify(item),
+    body: JSON.stringify(product),
   });
 }
 
