@@ -26,13 +26,14 @@ import {
 import { columns } from "@/pages/product/listProvider/columns";
 import { Toolbar } from "@/pages/product/listProvider/toolbar";
 import { Pagination } from "@/pages/product/listProvider/pagination";
+import { Mask } from "@/components/mask";
 
 function ListProvider() {
   //================================
   // Init
   //================================
-  const { data } = useSuspenseQuery({
-    queryKey: ["product"],
+  const { data, isFetching } = useSuspenseQuery({
+    queryKey: ["products"],
     async queryFn() {
       return getProducts("");
     },
@@ -73,7 +74,7 @@ function ListProvider() {
   return (
     <div className="space-y-4">
       <Toolbar table={table} />
-      <div className="rounded-md border p-2">
+      <div className="rounded-md border p-2 relative">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -122,6 +123,7 @@ function ListProvider() {
             )}
           </TableBody>
         </Table>
+        <Mask show={isFetching} blur />
       </div>
       <Pagination table={table} />
     </div>

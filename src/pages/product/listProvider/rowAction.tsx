@@ -22,7 +22,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteProduct } from "@/services/product";
 
 interface Props {
@@ -30,11 +30,23 @@ interface Props {
 }
 
 export function RowAction({ id }: Props) {
+  //================================
+  // Init
+  //================================
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [open, setOpen] = React.useState(false);
+
+  //================================
+  // Handlers
+  //================================
   const { isPending, mutateAsync } = useMutation({
     async mutationFn() {
       return deleteProduct(id);
+    },
+    onSuccess() {
+      // invalidate the "products" query (out of sync)
+      queryClient.invalidateQueries({ queryKey: ["products"] });
     },
   });
 
@@ -46,6 +58,9 @@ export function RowAction({ id }: Props) {
     });
   }
 
+  //================================
+  // Render
+  //================================
   return (
     <React.Fragment>
       <DropdownMenu>
