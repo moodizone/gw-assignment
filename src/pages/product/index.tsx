@@ -1,19 +1,14 @@
 import * as React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 
 import ListProvider from "@/pages/product/listProvider";
 import Fallback from "@/pages/product/fallback";
-import { Drawer } from "@/components/ui/drawer";
-import FormProvider from "@/pages/product/formProvider";
 import ErrorBoundaryProvider from "@/components/errorBoundary";
 
 export default function ProductList() {
   //================================
   // Init
   //================================
-  const { pathname } = useLocation();
-  const isDrawerOpen = pathname !== "/product";
-  const navigate = useNavigate();
 
   //================================
   // Render
@@ -37,15 +32,7 @@ export default function ProductList() {
           <ListProvider />
         </React.Suspense>
       </ErrorBoundaryProvider>
-      <Drawer
-        direction="right"
-        open={isDrawerOpen}
-        onOpenChange={() => {
-          navigate("/product");
-        }}
-      >
-        <FormProvider pathname={pathname} isDrawerOpen={isDrawerOpen} />
-      </Drawer>
+      <Outlet />
     </div>
   );
 }

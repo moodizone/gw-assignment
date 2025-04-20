@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
 import {
@@ -18,11 +18,6 @@ interface LoaderProps {
   id?: string;
 }
 
-interface Props {
-  pathname: string;
-  isDrawerOpen: boolean;
-}
-
 function ProductLoader({ mode, id }: LoaderProps) {
   const { data: product } = useSuspenseQuery({
     queryKey: ["product", id],
@@ -35,20 +30,19 @@ function ProductLoader({ mode, id }: LoaderProps) {
   return <ProductForm mode={mode} product={product} />;
 }
 
-function FormProvider({ isDrawerOpen, pathname }: Props) {
+function FormProvider() {
   //================================
   // Init
   //================================
   const { id } = useParams();
+  const { pathname } = useLocation();
   const mode = React.useMemo(() => {
-    if (!isDrawerOpen) return null;
-
     if (pathname === `/product/${id}`) return "details";
     if (pathname === `/product/edit/${id}`) return "edit";
     if (pathname === `/product/create`) return "create";
 
     return null;
-  }, [pathname, id, isDrawerOpen]);
+  }, [pathname, id]);
   const isEditMode = mode === "edit";
   const isCreateMode = mode === "create";
 
