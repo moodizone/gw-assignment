@@ -11,7 +11,7 @@ export interface Product {
   category: CategoryEnum;
   date: string; // ISO format
   price: number;
-  description: string;
+  description?: string;
   stock: number;
   rating: number;
 }

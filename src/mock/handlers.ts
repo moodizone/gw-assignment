@@ -36,7 +36,7 @@ export const handlers = [
       data = data.filter(
         (item) =>
           item.title.toLowerCase().includes(q) ||
-          item.description.toLowerCase().includes(q)
+          item.description?.toLowerCase().includes(q)
       );
     }
 
@@ -74,7 +74,13 @@ export const handlers = [
       data.sort((a, b) => {
         const valA = a[sort as keyof Product];
         const valB = b[sort as keyof Product];
-        return order === "asc" ? (valA > valB ? 1 : -1) : valA < valB ? 1 : -1;
+        return order === "asc"
+          ? valA! > valB!
+            ? 1
+            : -1
+          : valA! < valB!
+          ? 1
+          : -1;
       });
     }
 
@@ -82,7 +88,7 @@ export const handlers = [
     const paginated = data.slice((page - 1) * limit, page * limit);
 
     await sleep(rndDelay());
-    return HttpResponse.json({ data: paginated, total });
+    return HttpResponse.json({ data: paginated, total }, { status: 404 });
   }),
   http.get("/api/product/:id", async ({ params }) => {
     const id = Number(params.id);
@@ -90,7 +96,10 @@ export const handlers = [
     const product = data.find((item) => item.id === id);
 
     if (!product) {
-      return HttpResponse.json({ error: "Product not found" }, { status: 404 });
+      return HttpResponse.json(
+        { message: "Product not found" },
+        { status: 404 }
+      );
     }
 
     await sleep(rndDelay());
@@ -116,7 +125,7 @@ export const handlers = [
       rating: newItem.rating,
     };
 
-    setData([...data, item]);
+    setData([item, ...data]);
     await sleep(rndDelay());
     return HttpResponse.json(item);
   }),
@@ -124,7 +133,7 @@ export const handlers = [
   //================================
   // PATCH
   //================================
-  http.put("/api/product/:id", async ({ params, request }) => {
+  http.patch("/api/product/:id", async ({ params, request }) => {
     const id = Number(params.id);
     const updated = (await request.json()) as Partial<Product>;
     const data = getData();
@@ -135,7 +144,6 @@ export const handlers = [
 
     data[index] = { ...data[index], ...updated };
     setData(data);
-
     await sleep(rndDelay());
     return HttpResponse.json(data[index]);
   }),
