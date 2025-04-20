@@ -1,13 +1,15 @@
 "use client";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { Table } from "@tanstack/react-table";
-import { Star } from "lucide-react";
+import { Plus, Star } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Filter, OptionType } from "@/pages/product/listProvider/filters";
 import { ViewOptions } from "@/pages/product/listProvider/viewOptions";
 import { CategoryEnum, Product } from "@/services/type";
+import { Link } from "react-router-dom";
+import { cn } from "@/lib/utils";
 
 interface Props {
   table: Table<Product>;
@@ -50,7 +52,7 @@ export function Toolbar({ table }: Props) {
   const isFiltered = table.getState().columnFilters.length > 0;
 
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex items-start md:items-center justify-between">
       <div className="flex flex-1 flex-wrap items-center gap-2">
         <Input
           placeholder="Filter tasks..."
@@ -86,6 +88,12 @@ export function Toolbar({ table }: Props) {
         )}
       </div>
       <ViewOptions table={table} />
+      <Link
+        className={cn(buttonVariants({ variant: "default" }), "h-[32px] ml-2")}
+        to="/product/create"
+      >
+        <Plus />
+      </Link>
     </div>
   );
 }
