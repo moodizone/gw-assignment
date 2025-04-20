@@ -117,6 +117,7 @@ export const handlers = [
     };
 
     setData([...data, item]);
+    await sleep(rndDelay());
     return HttpResponse.json(item);
   }),
 
@@ -135,16 +136,18 @@ export const handlers = [
     data[index] = { ...data[index], ...updated };
     setData(data);
 
+    await sleep(rndDelay());
     return HttpResponse.json(data[index]);
   }),
 
   //================================
   // DELETE
   //================================
-  http.delete("/api/product/:id", ({ params }) => {
+  http.delete("/api/product/:id", async ({ params }) => {
     const id = Number(params.id);
     const filtered = getData().filter((i) => i.id !== id);
     setData(filtered);
+    await sleep(rndDelay());
     return HttpResponse.json({ success: true });
   }),
 ];

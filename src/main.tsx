@@ -3,7 +3,8 @@ import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import "./index.css";
-import Router from "./router/index.tsx";
+import { Toaster } from "@/components/ui/sonner.tsx";
+import Router from "@/router";
 
 const queryClient = new QueryClient();
 
@@ -22,6 +23,7 @@ enableMocking().then(() => {
     <StrictMode>
       <QueryClientProvider client={queryClient}>
         <Router />
+        <Toaster />
       </QueryClientProvider>
     </StrictMode>
   );
