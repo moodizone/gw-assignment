@@ -36,7 +36,6 @@ function ListProvider() {
     async queryFn() {
       return getProducts("");
     },
-    staleTime: Infinity,
     retry: 0,
   });
   const [rowSelection, setRowSelection] = React.useState({});
