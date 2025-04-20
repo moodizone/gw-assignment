@@ -6,7 +6,11 @@ export function getProducts(query: string) {
   const newURL = query ? `${base}?${query}` : base;
   return appFetch<{ data: Product[]; total: number }>(newURL);
 }
-
+export function getProductById(id: number) {
+  return appFetch<Product>(`/api/product/${id}`, {
+    method: "GET",
+  });
+}
 export function createProduct(item: Omit<Product, "id" | "date">) {
   return appFetch<Product>("/api/product", {
     method: "PATCH",

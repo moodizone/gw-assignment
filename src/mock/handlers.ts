@@ -84,6 +84,18 @@ export const handlers = [
     await sleep(rndDelay());
     return HttpResponse.json({ data: paginated, total });
   }),
+  http.get("/api/product/:id", async ({ params }) => {
+    const id = Number(params.id);
+    const data = getData();
+    const product = data.find((item) => item.id === id);
+
+    if (!product) {
+      return HttpResponse.json({ error: "Product not found" }, { status: 404 });
+    }
+
+    await sleep(rndDelay());
+    return HttpResponse.json(product);
+  }),
 
   //================================
   // POSt
