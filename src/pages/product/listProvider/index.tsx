@@ -13,6 +13,7 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table";
+import { useSearchParams } from "react-router-dom";
 
 import { getProducts } from "@/services/product";
 import {
@@ -32,14 +33,14 @@ function ListProvider() {
   //================================
   // Init
   //================================
+  const [searchParams] = useSearchParams();
   const { data, isFetching } = useSuspenseQuery({
     queryKey: ["products"],
     async queryFn() {
-      return getProducts("");
+      return getProducts(searchParams.toString());
     },
     retry: 0,
   });
-  const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -52,11 +53,9 @@ function ListProvider() {
     state: {
       sorting,
       columnVisibility,
-      rowSelection,
       columnFilters,
     },
     enableRowSelection: true,
-    onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
