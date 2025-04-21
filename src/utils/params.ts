@@ -15,6 +15,6 @@ export function getQueryParams(url: URL) {
     sort: url.searchParams.get("sort") || "",
     order: url.searchParams.get("order") || "asc",
     page: parseInt(url.searchParams.get("page") || "1"),
-    limit: parseInt(url.searchParams.get("limit") || "20"),
+    pageSize: parseInt(url.searchParams.get("pageSize") || "10"),
   };
 }

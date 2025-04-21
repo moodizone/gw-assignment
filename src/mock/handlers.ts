@@ -5,7 +5,7 @@ import { getData, setData } from "@/mock/lib";
 import { Product } from "@/services/type";
 import { sleep } from "@/utils/sleep";
 
-const rndDelay = () => Math.random() * 2000;
+const rndDelay = () => Math.random() * 500;
 
 export const handlers = [
   //================================
@@ -25,7 +25,7 @@ export const handlers = [
       sort,
       order,
       page,
-      limit,
+      pageSize,
     } = getQueryParams(url);
 
     let data = getData();
@@ -85,7 +85,7 @@ export const handlers = [
     }
 
     const total = data.length;
-    const paginated = data.slice((page - 1) * limit, page * limit);
+    const paginated = data.slice((page - 1) * pageSize, page * pageSize);
 
     await sleep(rndDelay());
     return HttpResponse.json({ data: paginated, total });
