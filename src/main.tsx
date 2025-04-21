@@ -8,19 +8,23 @@ import Router from "@/router";
 
 const queryClient = new QueryClient();
 
+export const BASE_URL =
+  process.env.NODE_ENV === "development" ? "/" : "/gw-assignment";
+
 async function enableMocking() {
-  const { worker } = await import("./mock");
   // `worker.start()` returns a Promise that resolves
   // once the Service Worker is up and ready to intercept requests.
+  const { worker } = await import("./mock");
+  const serviceWorkerUrl =
+    BASE_URL + BASE_URL.endsWith("/")
+      ? "mockServiceWorker.js"
+      : "/mockServiceWorker.js";
+
   return worker.start({
     onUnhandledRequest: "bypass",
-    ...(process.env.NODE_ENV === "development"
-      ? {}
-      : {
-          serviceWorker: {
-            url: `${import.meta.env.BASE_URL}/mockServiceWorker.js`,
-          },
-        }),
+    serviceWorker: {
+      url: serviceWorkerUrl,
+    },
   });
 }
 

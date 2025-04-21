@@ -6,10 +6,11 @@ import ProductDetails from "@/pages/product/details";
 import ProductList from "@/pages/product";
 import Layout from "@/components/layout";
 import NotFound from "@/pages/_404";
+import { BASE_URL } from "@/main";
 
 function Router() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={BASE_URL}>
       <Layout>
         <Routes>
           <Route path="/" element={<Navigate to={"/product"} />} />
