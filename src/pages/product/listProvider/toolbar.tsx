@@ -3,13 +3,13 @@ import * as React from "react";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { Table } from "@tanstack/react-table";
 import { Plus, Star } from "lucide-react";
+import { Link } from "react-router-dom";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Filter, OptionType } from "@/pages/product/listProvider/filters";
 import { ViewOptions } from "@/pages/product/listProvider/viewOptions";
 import { CategoryEnum, Product } from "@/services/type";
-import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 interface Props {
@@ -50,6 +50,12 @@ const ratings: OptionType[] = new Array(5).fill(1).map((_, index) => {
 });
 
 export function Toolbar({ table }: Props) {
+  //================================
+  // Init
+  //================================
+  const [query, setQuery] = React.useState(
+    (table.getColumn("title")?.getFilterValue() as string) ?? ""
+  );
   const filters = table.getState().columnFilters;
   // need to check value since all filters are registered
   // irrespective to their own value
@@ -69,15 +75,34 @@ export function Toolbar({ table }: Props) {
     });
   }, [filters]);
 
+  //================================
+  // Handler
+  //================================
+  React.useEffect(() => {
+    if (!isFiltered) {
+      setQuery("");
+    }
+  }, [isFiltered]);
+  React.useEffect(() => {
+    const timeout = setTimeout(() => {
+      table.getColumn("title")?.setFilterValue(query);
+    }, 300); // debounce delay in ms
+
+    return () => clearTimeout(timeout);
+  }, [query, table]);
+
+  //================================
+  // Render
+  //================================
   return (
     <div className="flex items-start md:items-center justify-between">
       <div className="flex flex-1 flex-wrap items-center gap-2">
         <Input
           placeholder="Filter products..."
-          value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("title")?.setFilterValue(event.target.value)
-          }
+          value={query}
+          onChange={(event) => {
+            setQuery(event.target.value);
+          }}
           className="h-8 w-[150px] lg:w-[250px]"
         />
         {table.getColumn("category") && (

@@ -46,12 +46,14 @@ function ListProvider() {
   const sort = searchParams.get("sort") || "date";
   const order = searchParams.get("order") || "asc";
   const categories = searchParams.getAll("category");
+  const search = searchParams.get("search");
   const rating = searchParams.get("maxRating");
   const columnFilters = [
     // multi-select filter
     { id: "category", value: categories },
-    // single filter
+    // single filters
     { id: "rating", value: rating },
+    { id: "title", value: search },
   ];
   const table = useReactTable({
     data: data?.data,
@@ -95,25 +97,28 @@ function ListProvider() {
       const newFilters =
         typeof updater === "function" ? updater(columnFilters) : updater;
 
-      console.log(newFilters);
-
       setSearchParams((prev) => {
         const params = new URLSearchParams(prev);
         params.delete("category");
         params.delete("maxRating");
+        params.delete("search");
 
         newFilters.forEach((filter) => {
           if (filter.id === "category") {
-            (filter.value as CategoryEnum[]).forEach((v) => {
+            const values = filter.value as CategoryEnum[];
+            values.forEach((v) => {
               params.append("category", v);
             });
           }
 
           if (filter.id === "rating") {
-            params.set(
-              "maxRating",
-              `${(filter.value as number[])[filter.value.length - 1]}`
-            );
+            const values = filter.value as number[];
+            params.set("maxRating", `${values[values.length - 1]}`);
+          }
+
+          if (filter.id === "title") {
+            const value = filter.value as string;
+            params.set("search", value);
           }
         });
 
