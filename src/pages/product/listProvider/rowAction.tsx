@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -34,6 +34,7 @@ export function RowAction({ id }: Props) {
   // Init
   //================================
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const queryClient = useQueryClient();
   const [open, setOpen] = React.useState(false);
 
@@ -73,10 +74,18 @@ export function RowAction({ id }: Props) {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-[160px]">
-          <DropdownMenuItem onClick={() => navigate(`/product/${id}`)}>
+          <DropdownMenuItem
+            onClick={() =>
+              navigate(`/product/${id}?${searchParams.toString()}`)
+            }
+          >
             {"Details"}
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => navigate(`/product/edit/${id}`)}>
+          <DropdownMenuItem
+            onClick={() =>
+              navigate(`/product/edit/${id}?${searchParams.toString()}`)
+            }
+          >
             {"Update"}
           </DropdownMenuItem>
           <DropdownMenuSeparator />

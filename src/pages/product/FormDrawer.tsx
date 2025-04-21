@@ -1,9 +1,10 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { Drawer } from "@/components/ui/drawer";
 import FormProvider from "@/pages/product/formProvider";
 
 function FormDrawer() {
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
   return (
@@ -11,7 +12,7 @@ function FormDrawer() {
       direction="right"
       open
       onOpenChange={() => {
-        navigate("/product");
+        navigate(`/product?${searchParams.toString()}`);
       }}
     >
       <FormProvider />

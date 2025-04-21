@@ -1,6 +1,6 @@
 import * as React from "react";
 import { z } from "zod";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
@@ -61,6 +61,7 @@ function ProductForm({ mode, product }: Props) {
   //================================
   const { id } = useParams();
   const queryClient = useQueryClient();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { isPending, mutateAsync } = useMutation({
     async mutationFn(data: ProductFormValues) {
@@ -81,7 +82,7 @@ function ProductForm({ mode, product }: Props) {
     toast(`Product ${isCreateMode ? "created" : "updated"} successfully`, {
       description: `${new Date().toLocaleTimeString()}`,
     });
-    navigate("/product");
+    navigate(`/product?${searchParams.toString()}`);
   }
 
   //================================

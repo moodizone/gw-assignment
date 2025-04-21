@@ -5,7 +5,7 @@ import { getData, setData } from "@/mock/lib";
 import { Product } from "@/services/type";
 import { sleep } from "@/utils/sleep";
 
-const rndDelay = () => Math.random() * 1000;
+const rndDelay = () => Math.random() * 2000;
 
 export const handlers = [
   //================================
