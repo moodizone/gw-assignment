@@ -41,7 +41,9 @@ function ListProvider() {
     React.useState<VisibilityState>({});
   const pageIndex = parseInt(searchParams.get("page") || "1", 10) - 1;
   const rowCount = data?.total || 0;
-  const pageSize = parseInt(searchParams.get("size") || "10", 10);
+  const pageSize = parseInt(searchParams.get("pageSize") || "10", 10);
+  const sort = searchParams.get("sort") || "date";
+  const order = searchParams.get("order") || "asc";
   const table = useReactTable({
     data: data?.data,
     columns,
@@ -51,6 +53,7 @@ function ListProvider() {
         pageSize,
         pageIndex,
       },
+      sorting: [{ id: sort, desc: order === "desc" }],
     },
     onPaginationChange(updater) {
       const newPagination =
@@ -61,7 +64,20 @@ function ListProvider() {
       setSearchParams((prev) => {
         const params = new URLSearchParams(prev);
         params.set("page", (newPagination.pageIndex + 1).toString());
-        params.set("size", newPagination.pageSize.toString());
+        params.set("pageSize", newPagination.pageSize.toString());
+        return params;
+      });
+    },
+    onSortingChange(updater) {
+      const newSort =
+        typeof updater === "function"
+          ? updater([{ id: sort, desc: order === "desc" }])
+          : updater;
+
+      setSearchParams((prev) => {
+        const params = new URLSearchParams(prev);
+        params.set("sort", newSort[0].id);
+        params.set("order", newSort[0].desc ? "desc" : "asc");
         return params;
       });
     },
