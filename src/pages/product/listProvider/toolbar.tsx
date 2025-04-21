@@ -1,4 +1,5 @@
 "use client";
+import * as React from "react";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { Table } from "@tanstack/react-table";
 import { Plus, Star } from "lucide-react";
@@ -49,7 +50,24 @@ const ratings: OptionType[] = new Array(5).fill(1).map((_, index) => {
 });
 
 export function Toolbar({ table }: Props) {
-  const isFiltered = table.getState().columnFilters.length > 0;
+  const filters = table.getState().columnFilters;
+  // need to check value since all filters are registered
+  // irrespective to their own value
+  const isFiltered = React.useMemo(() => {
+    return filters.some((filter) => {
+      const { value } = filter;
+      if (Array.isArray(value)) {
+        return value.length > 0;
+      } else if (typeof value === "string") {
+        return Boolean(value);
+      } else if (typeof value === "number") {
+        return !isNaN(value);
+      } else if (value && typeof value === "object") {
+        return Object.keys(value).length > 0;
+      }
+      return false;
+    });
+  }, [filters]);
 
   return (
     <div className="flex items-start md:items-center justify-between">

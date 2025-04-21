@@ -5,7 +5,7 @@ import { getData, setData } from "@/mock/lib";
 import { Product } from "@/services/type";
 import { sleep } from "@/utils/sleep";
 
-const rndDelay = () => Math.random() * 500;
+const rndDelay = () => Math.random() * 1000;
 
 export const handlers = [
   //================================
@@ -15,7 +15,7 @@ export const handlers = [
     const url = new URL(request.url);
     const {
       search,
-      category,
+      categories,
       minRating,
       maxRating,
       minPrice,
@@ -41,8 +41,8 @@ export const handlers = [
     }
 
     // category filter
-    if (category) {
-      data = data.filter((item) => item.category === category);
+    if (categories.length > 0) {
+      data = data.filter((item) => categories.includes(item.category));
     }
 
     // rating filter

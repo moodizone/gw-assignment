@@ -5,7 +5,7 @@ function getNum(url: URL, key: string, fallback: number) {
 export function getQueryParams(url: URL) {
   return {
     search: url.searchParams.get("search") || "",
-    category: url.searchParams.get("category") || "",
+    categories: url.searchParams.getAll("category") || "",
     minRating: getNum(url, "minRating", 1),
     maxRating: getNum(url, "maxRating", 5),
     minPrice: getNum(url, "minPrice", 0),

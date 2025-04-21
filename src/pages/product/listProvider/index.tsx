@@ -21,6 +21,7 @@ import { columns } from "@/pages/product/listProvider/columns";
 import { Toolbar } from "@/pages/product/listProvider/toolbar";
 import { Pagination } from "@/pages/product/listProvider/pagination";
 import { Mask } from "@/components/mask";
+import { CategoryEnum } from "@/services/type";
 
 function ListProvider() {
   //================================
@@ -44,6 +45,14 @@ function ListProvider() {
   const pageSize = parseInt(searchParams.get("pageSize") || "10", 10);
   const sort = searchParams.get("sort") || "date";
   const order = searchParams.get("order") || "asc";
+  const categories = searchParams.getAll("category");
+  const rating = searchParams.get("maxRating");
+  const columnFilters = [
+    // multi-select filter
+    { id: "category", value: categories },
+    // single filter
+    { id: "rating", value: rating },
+  ];
   const table = useReactTable({
     data: data?.data,
     columns,
@@ -53,6 +62,7 @@ function ListProvider() {
         pageSize,
         pageIndex,
       },
+      columnFilters,
       sorting: [{ id: sort, desc: order === "desc" }],
     },
     onPaginationChange(updater) {
@@ -81,10 +91,41 @@ function ListProvider() {
         return params;
       });
     },
+    onColumnFiltersChange(updater) {
+      const newFilters =
+        typeof updater === "function" ? updater(columnFilters) : updater;
+
+      console.log(newFilters);
+
+      setSearchParams((prev) => {
+        const params = new URLSearchParams(prev);
+        params.delete("category");
+        params.delete("maxRating");
+
+        newFilters.forEach((filter) => {
+          if (filter.id === "category") {
+            (filter.value as CategoryEnum[]).forEach((v) => {
+              params.append("category", v);
+            });
+          }
+
+          if (filter.id === "rating") {
+            params.set(
+              "maxRating",
+              `${(filter.value as number[])[filter.value.length - 1]}`
+            );
+          }
+        });
+
+        return params;
+      });
+    },
     enableRowSelection: true,
     onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
     manualPagination: true,
+    manualSorting: true,
+    manualFiltering: true,
     rowCount,
   });
 
@@ -92,6 +133,8 @@ function ListProvider() {
   // Handlers
   //================================
   React.useEffect(() => {
+    // console.log(111, stringifySP);
+
     qc.invalidateQueries({
       queryKey: ["products"],
     });
