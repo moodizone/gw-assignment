@@ -29,6 +29,7 @@ function ListProvider() {
   //================================
   const qc = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
+  const spRef = React.useRef(searchParams.toString());
   const stringifySP = searchParams.toString();
   const { data, isFetching } = useSuspenseQuery({
     queryKey: ["products"],
@@ -139,10 +140,12 @@ function ListProvider() {
   //================================
   React.useEffect(() => {
     // console.log(111, stringifySP);
-
-    qc.invalidateQueries({
-      queryKey: ["products"],
-    });
+    if (spRef.current !== stringifySP) {
+      spRef.current = stringifySP;
+      qc.invalidateQueries({
+        queryKey: ["products"],
+      });
+    }
   }, [stringifySP, qc]);
 
   //================================
