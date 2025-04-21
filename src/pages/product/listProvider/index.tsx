@@ -1,15 +1,8 @@
 import * as React from "react";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import {
-  ColumnFiltersState,
   flexRender,
   getCoreRowModel,
-  getFacetedRowModel,
-  getFacetedUniqueValues,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  SortingState,
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table";
@@ -33,39 +26,60 @@ function ListProvider() {
   //================================
   // Init
   //================================
-  const [searchParams] = useSearchParams();
+  const qc = useQueryClient();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const stringifySP = searchParams.toString();
   const { data, isFetching } = useSuspenseQuery({
     queryKey: ["products"],
     async queryFn() {
       return getProducts(searchParams.toString());
     },
     retry: 0,
+    refetchOnWindowFocus: false,
   });
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const pageIndex = parseInt(searchParams.get("page") || "1", 10) - 1;
+  const rowCount = data?.total || 0;
+  const pageSize = parseInt(searchParams.get("size") || "10", 10);
   const table = useReactTable({
-    data: data.data,
+    data: data?.data,
     columns,
     state: {
-      sorting,
       columnVisibility,
-      columnFilters,
+      pagination: {
+        pageSize,
+        pageIndex,
+      },
+    },
+    onPaginationChange(updater) {
+      const newPagination =
+        typeof updater === "function"
+          ? updater({ pageIndex: pageIndex, pageSize })
+          : updater;
+
+      setSearchParams((prev) => {
+        const params = new URLSearchParams(prev);
+        params.set("page", (newPagination.pageIndex + 1).toString());
+        params.set("size", newPagination.pageSize.toString());
+        return params;
+      });
     },
     enableRowSelection: true,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
+    manualPagination: true,
+    rowCount,
   });
+
+  //================================
+  // Handlers
+  //================================
+  React.useEffect(() => {
+    qc.invalidateQueries({
+      queryKey: ["products"],
+    });
+  }, [stringifySP, qc]);
 
   //================================
   // Render
