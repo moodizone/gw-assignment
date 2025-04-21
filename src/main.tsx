@@ -10,11 +10,17 @@ const queryClient = new QueryClient();
 
 async function enableMocking() {
   const { worker } = await import("./mock");
-
   // `worker.start()` returns a Promise that resolves
   // once the Service Worker is up and ready to intercept requests.
   return worker.start({
     onUnhandledRequest: "bypass",
+    ...(process.env.NODE_ENV === "development"
+      ? {}
+      : {
+          serviceWorker: {
+            url: `${import.meta.env.BASE_URL}/mockServiceWorker.js`,
+          },
+        }),
   });
 }
 
